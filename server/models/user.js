@@ -100,7 +100,7 @@ UserSchema.pre('save', function (next) {
       });
     });
   } else {
-    next();
+		next();
   }
 });
 var User = mongoose.model('User', UserSchema);
