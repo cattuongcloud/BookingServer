@@ -4,7 +4,9 @@
   "description": "bookingserver v1",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
+    "server": "node server/server.js",
+    "client": "npm start --prefix client",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
     "test": "SET \"NODE_ENV=test\" && mocha server/**/*.test.js",
     "test-watch": "nodemon --exec 'npm test'"
   },
@@ -21,11 +23,14 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
+    "concurrently": "^3.5.1",
+    "ejs": "^2.6.1",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.2.1",
     "lodash": "^4.17.10",
     "mongodb": "^3.0.8",
     "mongoose": "^5.0.18",
+    "socket.io": "^2.1.0",
     "validator": "^10.2.0"
   },
   "devDependencies": {

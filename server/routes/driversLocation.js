@@ -1,10 +1,10 @@
 var express = require("express");
 var router = express.Router();
-var mongojs = require("mongojs");
-
-var db = mongojs("mongodb://tuonghuynh:tuong123@ds111390.mlab.com:11390/taxiapp", ["driversLocation"]);
-
-
+var { mongoose } = require('../db/mongoose');
+var { DriversLocation } = require('../models/driversLocation');
+//var { authenticate } = require('../middleware/authenticate');
+var { Booking } = require('../models/booking');
+const _ = require('lodash');
 //upadate driver socket id
 
 router.put("/driverLocationSocket/:id", function(req, res, next){
@@ -17,7 +17,7 @@ router.put("/driverLocationSocket/:id", function(req, res, next){
 		});
 
 	}else{
-		db.driversLocation.update({_id:mongojs.ObjectId(req.params.id)}, 
+		DriversLocation.update({_id: req.params.id}, 
 			{$set: {socketId:req.body.socketId}}, function(err, updateDetails){
 				if(err){
 					res.send(err);
@@ -29,30 +29,37 @@ router.put("/driverLocationSocket/:id", function(req, res, next){
 	}
 });
 
-//get all driver
+router.post('/driverLocation', (req, res) => {    
+    var driversLocation = new DriversLocation(req.body);
+    driversLocation.save().then((doc) => {
+        res.send(doc);        
+    }, (e) => {
+        res.status(400).send(e);
+    });
+});
+
+
 router.get("/alldriverslocations", function(req, res, next){
-	db.driversLocation.find(function(err, driversLocation){
+	DriversLocation.find(function(err, data){
 		if(err){
 			res.send(err);
 
 		}
-		res.json(driversLocation);
+		res.json(data);
 	})
 }); 
 
 
 //get nearby driver
-router.get("/driverLocation", function(req, res, next){
-	db.driversLocation.createIndex({point:"2dsphere"});
-	db.driversLocation.ensureIndex({"coordinate":"2dsphere"});
-	db.driversLocation.find({
+router.get("/driverLocation", function(req, res, next){	
+	DriversLocation.find({ 
 			"coordinate":{
 				"$near":{
 					"$geometry":{
 						"type":"Point",
 						"coordinates": [parseFloat(req.query.longitude), parseFloat(req.query.latitude)]
 					},
-					"$maxDistance":10000
+					"$maxDistance":100000
 				}
 			}
 		}, function(err, location){
@@ -69,7 +76,7 @@ router.get("/driverLocation", function(req, res, next){
 //Get Single Driver and emit track by user to driver
 router.get("/driverLocation/:id", function(req, res, next){
 	var io = req.app.io;
-    db.driversLocation.findOne({driverId: req.params.id},function(err, location){
+    DriversLocation.findOne({driverId: req.params.id},function(err, location){
         if (err){
             res.send(err);
         }
@@ -90,7 +97,7 @@ router.put("/driverLocation/:id", function(req, res, next){
             "error":"Bad Data"
         });
     } else {
-        db.driversLocation.update({_id: mongojs.ObjectId(req.params.id)},{ $set: {
+        DriversLocation.update({_id: req.params.id},{ $set: {
         	socketId:location.socketId,
         	coordinate:{
                 "type": "Point",
@@ -107,7 +114,7 @@ router.put("/driverLocation/:id", function(req, res, next){
         if (updateDetails){
 
             //Get updated location
-            db.driversLocation.findOne({_id:  mongojs.ObjectId(req.params.id)},function(error, updatedLocation){
+            DriversLocation.findOne({_id:  req.params.id},function(error, updatedLocation){
                 if (error){
                     res.send(error);
                 }
