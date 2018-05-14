@@ -12,7 +12,7 @@ var socket_io = require("socket.io");
 
 var io = socket_io();
 
-const port = process.env.PORT;
+const port = 3001;
 var app = express();
 
 app.set("views",  path.join(__dirname, "views"));
