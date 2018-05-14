@@ -5,8 +5,8 @@
 // module.exports = { mongoose }
 
 var mongoose = require('mongoose');
-
+var db = "mongodb://tuonghuynh:tuong123@ds111390.mlab.com:11390/taxiapp";
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(db);
 
 module.exports = {mongoose};
