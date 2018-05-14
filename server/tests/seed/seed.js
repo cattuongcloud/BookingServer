@@ -36,13 +36,14 @@ const todos = [{
   _creator: userTwoId
 }];
 
-const populateTodos = (done) => {
+const populateTodos = (done) => { 
   Todo.remove({}).then(() => {
     return Todo.insertMany(todos);
   }).then(() => done());
 };
 
-const populateUsers = (done) => {
+const populateUsers = function(done){
+  this.timeout(12000);
   User.remove({}).then(() => {
     var userOne = new User(users[0]).save();
     var userTwo = new User(users[1]).save();

@@ -5,6 +5,7 @@ const index = require("./routes/index");
 const user = require("./routes/user");
 const todo = require("./routes/todo");
 const booking = require("./routes/booking");
+const group = require("./routes/group");
 const driversLocation = require("./routes/driversLocation");
 var path = require("path");
 var socket_io = require("socket.io");
@@ -26,6 +27,7 @@ app.use("/api", user);
 app.use("/api", todo);
 app.use("/api", booking);
 app.use("/api", driversLocation);
+app.use("/api", group);
 
 // app.listen(port, () => {
 //   console.log(`Started up at port ${port}`);

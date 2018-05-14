@@ -1,97 +1,88 @@
 var express = require("express");
 var router = express.Router();
 var { mongoose } = require('../db/mongoose');
-var { Todo } = require('../models/todo');
+var { Group } = require('../models/group');
 var { authenticate } = require('../middleware/authenticate');
 const _ = require('lodash');
-const {ObjectID} = require('mongodb');
-router.post('/todos', authenticate, (req, res) => {
-    var todo = new Todo({
-        text: req.body.text,
+
+router.post('/groups', authenticate, (req, res) => {
+    var group = new Group({
+        name: req.body.name,
         _creator: req.user._id
     });
 
-    todo.save().then((doc) => {
+    group.save().then((doc) => {
         res.send(doc);
     }, (e) => {
         res.status(400).send(e);
     });
 });
 
-router.get('/todos', authenticate, (req, res) => {
-    Todo.find({
+router.get('/groups', authenticate, (req, res) => {
+    Group.find({
         _creator: req.user._id
-    }).then((todos) => {
-        res.send({ todos });
+    }).then((groups) => {
+        res.send({ groups });
     }, (e) => {
         res.status(400).send(e);
     });
 });
 
-router.get('/todos/:id', authenticate, (req, res) => {
+router.get('/groups/:id', authenticate, (req, res) => {
     var id = req.params.id;
 
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
     }
-
-    Todo.findOne({
+    Group.findOne({
         _id: id,
         _creator: req.user._id
-    }).then((todo) => {
-        if (!todo) {
+    }).then((group) => {
+        if (!group) {
             return res.status(404).send();
         }
 
-        res.send({ todo });
+        res.send({ group });
     }).catch((e) => {
         res.status(400).send();
     });
 });
 
-router.delete('/todos/:id', authenticate, (req, res) => {
+router.delete('/groups/:id', authenticate, (req, res) => {
     var id = req.params.id;
 
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
     }
 
-    Todo.findOneAndRemove({
+    Group.findOneAndRemove({
         _id: id,
         _creator: req.user._id
-    }).then((todo) => {
-        if (!todo) {
+    }).then((group) => {
+        if (!group) {
             return res.status(404).send();
         }
 
-        res.send({ todo });
+        res.send({ group });
     }).catch((e) => {
         res.status(400).send();
     });
 });
 
 
-router.patch('/todos/:id', authenticate, (req, res) => {
+router.patch('/groups/:id', authenticate, (req, res) => {
     var id = req.params.id;
-    var body = _.pick(req.body, ['text', 'completed']);
+    var body = _.pick(req.body, ['name']);
 
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
     }
-
-    if (_.isBoolean(body.completed) && body.completed) {
-        body.completedAt = new Date().getTime();
-    } else {
-        body.completed = false;
-        body.completedAt = null;
-    }
-
-    Todo.findOneAndUpdate({ _id: id, _creator: req.user._id }, { $set: body }, { new: true }).then((todo) => {
-        if (!todo) {
+    Group.findOneAndUpdate({ _id: id, _creator: req.user._id }, { $set: body }, { new: true }).then((group) => {
+        if (!group) {
             return res.status(404).send();
         }
 
-        res.send({ todo });
+        res.send({ group });
     }).catch((e) => {
         res.status(400).send();
     })

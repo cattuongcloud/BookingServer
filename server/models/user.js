@@ -31,13 +31,24 @@ var UserSchema = new mongoose.Schema({
       type: String,
       required: true
     }
-  }]
+  }],
+  phoneNumber: { type: Number },
+  groupID: {type: mongoose.Schema.Types.ObjectId},
+  firstName: { type: String },
+  lastName: { type: String },
+  dob: { type: String },
+  nationalID: { type: Number },  
+  rating: { type: Number },
+  address: { type: Object },
+  vehicle: { type: Object },
+  profilePic: { type: String },
+  licensePic: { type: Object }
 });
 
 UserSchema.methods.toJSON = function () {
   var user = this;
   var userObject = user.toObject();
-  return _.pick(userObject, ['_id', 'email']);
+  return userObject;
 };
 
 UserSchema.methods.generateAuthToken = function () {
@@ -57,7 +68,6 @@ UserSchema.methods.removeToken = function (token) {
     }
   });
 };
-
 UserSchema.statics.findByToken = function (token) {
   var User = this;
   var decoded;
@@ -90,6 +100,7 @@ UserSchema.statics.findByCredentials = function (email, password) {
     });
   });
 };
+
 UserSchema.pre('save', function (next) {
   var user = this;
   if (user.isModified('password')) {

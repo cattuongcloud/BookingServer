@@ -9,9 +9,8 @@ const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 beforeEach(populateUsers);
 beforeEach(populateTodos);
 describe('POST /api/todos', () => {
-  it('should create a new todo', (done) => {
-    var text = 'Test todo text';
-
+  it('should create a new todo', (done)=>{
+    var text = 'Test todo text';    
     request(app)
       .post('/api/todos')
       .set('x-auth', users[0].tokens[0].token)
@@ -66,7 +65,7 @@ describe('GET /api/todos', () => {
   });
 });
 
-describe('GET /todos/:id', () => {
+describe('GET /api/todos/:id', () => {
   it('should return todo doc', (done) => {
     request(app)
       .get(`/api/todos/${todos[0]._id.toHexString()}`)

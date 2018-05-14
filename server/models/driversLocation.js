@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 var driversLocationSchema = new mongoose.Schema({
   driverId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },  
   coordinate: {    
