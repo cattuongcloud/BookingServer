@@ -14,9 +14,6 @@ var io = socket_io();
 
 const port = process.env.PORT;
 var app = express();
-if (process.env.NODE_ENV === 'production') {
-	app.use(express.static('../client/build'));
-  }
 app.set("views",  path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.engine("html", require("ejs").renderFile);
@@ -42,6 +39,10 @@ app.use("/api", group);
 //   console.log(`Started up at port ${port}`);
 // });
 
+if (process.env.NODE_ENV === 'production') {
+	console.log('tese');
+	app.use(express.static('../client/build'));
+  }
 io.listen(app.listen(port, function(){
 	console.log("Server running on port", port);
 }));
