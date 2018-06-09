@@ -14,7 +14,9 @@ var io = socket_io();
 
 const port = process.env.PORT;
 var app = express();
-
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('../client/build'));
+  }
 app.set("views",  path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.engine("html", require("ejs").renderFile);
@@ -22,6 +24,13 @@ app.engine("html", require("ejs").renderFile);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 // user API
+app.use(function (req, res, next) {
+res.header("Access-Control-Allow-Origin", "*");
+res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-auth");
+next();
+});
+
 app.use("/", index);
 app.use("/api", user);
 app.use("/api", todo);
