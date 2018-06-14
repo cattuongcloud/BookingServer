@@ -2,11 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import { getText } from '../../redux/actions/homeActions';
 class Home extends React.Component {     
-    componentDidMount() {              
-        if (!this.props.auth) {
-            this.props.history.push('/signin');
-        }
-        
+    componentDidMount() {        
         this.props.getText('text');
         console.log(this);
     }  

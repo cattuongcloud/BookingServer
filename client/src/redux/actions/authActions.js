@@ -7,7 +7,7 @@ import {
 } from './types';
 //import { stringify } from 'querystring';
 
-const ROOT_URL = 'http://localhost:5000/api';
+const ROOT_URL = 'http://localhost:3001/api';
 
 export function signinUser({ email, password }, callback) { 
   return function(dispatch) {    
